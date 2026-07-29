@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOMAAN KHAN // DAN-1 (VIRUS BOSS) - 3D HACKER MATRIX SYSTEM</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&display=swap');
+
+    :root {
+      --matrix-black: #050a07;
+      --matrix-card-bg: rgba(10, 20, 14, 0.88);
+      --matrix-green: #00ff66;
+      --matrix-green-glow: rgba(0, 255, 102, 0.4);
+      --matrix-dim: #008f39;
+      --cyber-red: #ff0055;
+      --cyber-cyan: #00e5ff;
+      --cyber-yellow: #ffcc00;
+      --text-main: #e2fbe8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--matrix-black);
+      color: var(--text-main);
+      font-family: 'Fira Code', monospace;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+      position: relative;
+      overflow-x: hidden;
+      perspective: 1200px;
+    }
+
+    /* Matrix Rain Canvas */
+    #matrixCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.25;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 980px;
+      width: 100%;
+      background: var(--matrix-card-bg);
+      border: 2px solid var(--matrix-green);
+      border-radius: 20px;
+      padding: 40px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 0 60px rgba(0, 255, 102, 0.22);
+      position: relative;
+      z-index: 1;
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out;
+    }
+
+    /* MINIMAL PLAY / STOP MUSIC BUTTON - NO PREVIEW BOX */
+    .minimal-music-bar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin: 20px 0 30px 0;
+    }
+
+    .play-stop-btn {
+      background: #000000;
+      border: 2px solid var(--matrix-green);
+      color: var(--matrix-green);
+      padding: 14px 32px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: 'Fira Code', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 25px rgba(0, 255, 102, 0.25);
+    }
+
+    .play-stop-btn:hover {
+      background: var(--matrix-green);
+      color: var(--matrix-black);
+      box-shadow: 0 0 35px var(--matrix-green);
+      transform: translateY(-2px);
+    }
+
+    .audio-status {
+      font-size: 0.75rem;
+      color: var(--matrix-dim);
+    }
+
+    /* Sound Control Toggle */
+    .sound-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 255, 102, 0.1);
+      border: 1px solid var(--matrix-green);
+      color: var(--matrix-green);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sound-toggle:hover {
+      background: var(--matrix-green);
+      color: var(--matrix-black);
+      box-shadow: 0 0 15px var(--matrix-green);
+    }
+
+    /* ASCII Header */
+    .ascii-header {
+      font-size: 0.72rem;
+      color: var(--matrix-green);
+      text-shadow: 0 0 8px var(--matrix-green-glow);
+      line-height: 1.2;
+      margin-bottom: 20px;
+      text-align: center;
+      overflow-x: auto;
+    }
+
+    .typing-box {
+      color: var(--matrix-green);
+      font-size: 1.3rem;
+      font-weight: 700;
+      text-align: center;
+      min-height: 38px;
+      text-shadow: 0 0 10px var(--matrix-green-glow);
+    }
+
+    .title-main {
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-align: center;
+      text-shadow: 0 0 20px var(--matrix-green);
+      margin-top: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--matrix-dim);
+      font-size: 0.95rem;
+      margin-top: 6px;
+    }
+
+    /* 3D Dual Cards */
+    .dual-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 30px 0;
+    }
+
+    .profile-card-3d {
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid var(--matrix-dim);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .profile-card-3d:hover {
+      border-color: var(--matrix-green);
+      box-shadow: 0 15px 35px var(--matrix-green-glow);
+    }
+
+    .img-avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--matrix-green);
+      box-shadow: 0 0 20px var(--matrix-green-glow);
+      transform: translateZ(30px);
+    }
+
+    .img-nomaan {
+      border-radius: 16px;
+    }
+
+    .card-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--matrix-green);
+      margin-top: 15px;
+      text-shadow: 0 0 8px var(--matrix-green);
+    }
+
+    /* Telemetry HUD */
+    .telemetry-hud {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 25px 0;
+    }
+
+    .hud-card {
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid var(--matrix-dim);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .hud-val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--matrix-green);
+    }
+
+    .hud-lbl {
+      font-size: 0.7rem;
+      color: var(--matrix-dim);
+      margin-top: 4px;
+    }
+
+    /* Hacker Terminal */
+    .terminal-window {
+      background: #000000;
+      border: 1px solid var(--matrix-green);
+      border-radius: 12px;
+      margin: 25px 0;
+      box-shadow: inset 0 0 20px rgba(0, 255, 102, 0.12);
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      background: #0a140d;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--matrix-dim);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .term-title {
+      font-size: 0.8rem;
+      color: var(--matrix-green);
+    }
+
+    .terminal-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .term-btn {
+      background: rgba(0, 255, 102, 0.1);
+      border: 1px solid var(--matrix-green);
+      color: var(--matrix-green);
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+    }
+
+    .term-btn:hover {
+      background: var(--matrix-green);
+      color: var(--matrix-black);
+    }
+
+    .terminal-body {
+      padding: 20px;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--matrix-green);
+      min-height: 160px;
+    }
+
+    .green-text { color: var(--matrix-green); }
+    .cyan-text { color: var(--cyber-cyan); }
+    .white-text { color: #ffffff; }
+
+    /* Snake Showcase Box */
+    .snake-showcase {
+      text-align: center;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid var(--matrix-green);
+      border-radius: 14px;
+      padding: 20px;
+      margin: 25px 0;
+    }
+
+    .snake-showcase img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+
+    /* Social Buttons */
+    .social-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 30px;
+    }
+
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #000000;
+      border: 1px solid var(--matrix-green);
+      color: var(--matrix-green);
+      padding: 10px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+    }
+
+    .social-btn:hover {
+      background: var(--matrix-green);
+      color: var(--matrix-black);
+      box-shadow: 0 0 20px var(--matrix-green);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Matrix Code Rain Canvas -->
+  <canvas id="matrixCanvas"></canvas>
+
+  <div class="container" id="mainContainer">
+    
+    <!-- Sound Effect Toggle Button -->
+    <button class="sound-toggle" onclick="toggleAudio()"><i class="fa-solid fa-volume-high" id="soundIcon"></i> <span id="soundLabel">SFX: ON</span></button>
+
+    <!-- PERFECTED ASCII HEADER -->
+    <pre class="ascii-header">
+  _  _ ____ _  _ ____ ____ _  _    _  _ _  _ ____ _  _ 
+  |\ | |  | |\/| |__| |__| |\ |    |_/  |__| |__| |\ | 
+  | \| |__| |  | |  | |  | | \|    | \_ |  | |  | | \| 
+  ====================================================
+           SYSTEM ACCESS : GRANTED // CLEARANCE 9
+    </pre>
+
+    <div class="typing-box" id="typingText"></div>
+    <h1 class="title-main">NOMAAN KHAN // DAN-1</h1>
+    <p class="subtitle">ALIAS: VIRUS BOSS • PARROT OS RESEARCHER • FULL-STACK OPERATIVE</p>
+
+    <!-- MINIMAL PLAY / STOP MUSIC CONTROL BUTTON -->
+    <div class="minimal-music-bar">
+      <button class="play-stop-btn" id="musicToggleBtn" onclick="togglePhonkTrack()">
+        <i class="fa-solid fa-play" id="musicBtnIcon"></i> <span id="musicBtnText">PLAY BRUXO PSYCHO PHONK</span>
+      </button>
+      <span class="audio-status" id="audioStatusText">Status: Ready // Click to stream track</span>
+    </div>
+
+    <!-- REAL-TIME TELEMETRY HUD -->
+    <div class="telemetry-hud">
+      <div class="hud-card">
+        <div class="hud-val" id="pingVal">12 ms</div>
+        <div class="hud-lbl">LATENCY</div>
+      </div>
+      <div class="hud-card">
+        <div class="hud-val" id="cpuVal">14%</div>
+        <div class="hud-lbl">CPU LOAD</div>
+      </div>
+      <div class="hud-card">
+        <div class="hud-val" style="color: var(--cyber-cyan);">PARROT OS</div>
+        <div class="hud-lbl">KERNEL</div>
+      </div>
+      <div class="hud-card">
+        <div class="hud-val" style="color: var(--cyber-yellow);">ACTIVE</div>
+        <div class="hud-lbl">FIREWALL</div>
+      </div>
+    </div>
+
+    <!-- 3D DUAL SHOWCASE CARDS -->
+    <div class="dual-showcase">
+      <div class="profile-card-3d" onmousemove="tilt3D(event, this)" onmouseleave="reset3D(this)">
+        <img src="assets/virus_boss_logo.png" class="img-avatar" alt="Virus Boss Logo" />
+        <div class="card-label">[ ALIAS : VIRUS BOSS ]</div>
+      </div>
+      <div class="profile-card-3d" onmousemove="tilt3D(event, this)" onmouseleave="reset3D(this)">
+        <img src="assets/nomaan_photo.png" class="img-avatar img-nomaan" alt="Nomaan Khan Portrait" />
+        <div class="card-label">[ OPERATIVE : NOMAAN KHAN ]</div>
+      </div>
+    </div>
+
+    <!-- HACKER TERMINAL -->
+    <div class="terminal-window" onmousemove="tilt3D(event, this)" onmouseleave="reset3D(this)">
+      <div class="terminal-header">
+        <span class="term-title">root@dan-1:~# ./session_init</span>
+        <div class="terminal-controls">
+          <button class="term-btn" onclick="runScript('nmap')">[ NMAP RECON ]</button>
+          <button class="term-btn" onclick="runScript('masscan')">[ MASSCAN SCAN ]</button>
+          <button class="term-btn" onclick="runScript('firewall')">[ FIREWALL AUDIT ]</button>
+        </div>
+      </div>
+      <div class="terminal-body" id="termOutput">
+        <p><span class="cyan-text">root@dan-1:~#</span> ./status_check.sh</p>
+        <p class="green-text">[+] OPERATIVE  : NOMAAN KHAN (DAN-1 / VIRUS BOSS)</p>
+        <p class="white-text">[+] KERNEL     : Parrot Security Linux 6.0 x86_64 🦜</p>
+        <p class="green-text">[+] AUDIT TOOLS: Nmap, Masscan, Vulnerability Scanners</p>
+        <p class="cyan-text">[+] BACKEND    : Python (Flask), Supabase, Firebase, PostgreSQL</p>
+        <p class="white-text">[+] FRONTEND   : Tailwind CSS, HTML5, 3D Matrix UI</p>
+      </div>
+    </div>
+
+    <!-- GITHUB CONTRIBUTION SNAKE SHOWCASE -->
+    <div class="snake-showcase">
+      <h3 style="color: var(--matrix-green); margin-bottom: 12px;"><i class="fa-solid fa-staff-snake"></i> GitHub Contribution Grid Snake Game</h3>
+      <img src="github-user-contribution.svg" alt="GitHub Contribution Snake Animation" />
+    </div>
+
+    <!-- SOCIAL TRANSMISSIONS -->
+    <div class="social-links">
+      <a href="https://virusboss.in" target="_blank" class="social-btn"><i class="fa-solid fa-globe"></i> virusboss.in</a>
+      <a href="https://www.youtube.com/@VIRUSBOSS" target="_blank" class="social-btn"><i class="fa-brands fa-youtube"></i> @VIRUSBOSS</a>
+      <a href="https://instagram.com/Virus_Boss" target="_blank" class="social-btn"><i class="fa-brands fa-instagram"></i> @Virus_Boss</a>
+      <a href="mailto:nomaankhannfs2@gmail.com" class="social-btn"><i class="fa-solid fa-envelope"></i> nomaankhannfs2@gmail.com</a>
+    </div>
+
+  </div>
+
+  <script>
+    // BULLETPROOF LOCAL AUDIO ENGINE WITH FALLBACKS
+    let localAudio = null;
+    let isTrackPlaying = false;
+
+    function initAudioEngine() {
+      if (!localAudio) {
+        localAudio = new Audio();
+        localAudio.loop = true;
+        // Try local asset relative path first
+        localAudio.src = 'assets/track.mp3';
+        
+        localAudio.addEventListener('error', function(e) {
+          console.log('Trying root directory MP3 fallback...');
+          localAudio.src = 'BRUXO PSYCHO - LVGHTER, SNAX! ~ (SLOWED + REVERB) [BRAZILIAN PHONK] - (320 Kbps).mp3';
+        });
+      }
+    }
+
+    function togglePhonkTrack() {
+      initAudioEngine();
+      const btnIcon = document.getElementById('musicBtnIcon');
+      const btnText = document.getElementById('musicBtnText');
+      const statusText = document.getElementById('audioStatusText');
+
+      if (isTrackPlaying) {
+        localAudio.pause();
+        btnIcon.className = 'fa-solid fa-play';
+        btnText.textContent = 'PLAY BRUXO PSYCHO PHONK';
+        statusText.textContent = 'Status: Stopped';
+        isTrackPlaying = false;
+      } else {
+        const playPromise = localAudio.play();
+        if (playPromise !== undefined) {
+          playPromise.then(_ => {
+            btnIcon.className = 'fa-solid fa-stop';
+            btnText.textContent = 'STOP BRUXO PSYCHO PHONK';
+            statusText.textContent = 'Status: Streaming BRUXO PSYCHO 🔊';
+            isTrackPlaying = true;
+          }).catch(error => {
+            console.error("Audio playback error:", error);
+            statusText.textContent = 'Status: Browser blocked audio — click again!';
+          });
+        }
+      }
+    }
+
+    // WEB AUDIO API SOUND SYNTHESIZER FOR CLICKS
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playClickSound() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.05);
+      } catch(e) {}
+    }
+
+    function toggleAudio() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundLabel').textContent = soundEnabled ? 'SFX: ON' : 'SFX: OFF';
+      document.getElementById('soundIcon').className = soundEnabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
+    }
+
+    // 3D PARALLAX SCROLL & TILT ENGINE
+    const container = document.getElementById('mainContainer');
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY;
+      const rotateX = Math.min(scrolled * 0.03, 10);
+      container.style.transform = `rotateX(${rotateX}deg)`;
+    });
+
+    function tilt3D(e, element) {
+      const rect = element.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      element.style.transform = `perspective(1000px) rotateX(${-y / 12}deg) rotateY(${x / 12}deg) scale3d(1.02, 1.02, 1.02)`;
+    }
+
+    function reset3D(element) {
+      element.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+    }
+
+    // INTERACTIVE TERMINAL SCRIPT RUNNER
+    function runScript(type) {
+      playClickSound();
+      const term = document.getElementById('termOutput');
+      if (type === 'nmap') {
+        term.innerHTML = `
+          <p class="cyan-text">root@dan-1:~# nmap -sS -sV -p- --min-rate 5000 target.virusboss.in</p>
+          <p class="green-text">[+] Initiating Stealth SYN Scan on target.virusboss.in...</p>
+          <p>PORT &nbsp;&nbsp;&nbsp;&nbsp;STATE SERVICE &nbsp;&nbsp;&nbsp;&nbsp;VERSION</p>
+          <p class="green-text">22/tcp &nbsp;&nbsp;open &nbsp;ssh &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OpenSSH 9.6p1</p>
+          <p class="green-text">80/tcp &nbsp;&nbsp;open &nbsp;http &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nginx 1.25 (Matrix UI)</p>
+          <p class="green-text">443/tcp &nbsp;open &nbsp;https &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AWS WAF Shield Active</p>
+          <p class="green-text">5432/tcp open &nbsp;postgresql &nbsp;Supabase Cluster</p>
+          <p class="white-text">[+] Nmap scan report: 0 vulnerabilities found. Target secure.</p>
+        `;
+      } else if (type === 'masscan') {
+        term.innerHTML = `
+          <p class="cyan-text">root@dan-1:~# masscan 10.0.0.0/8 -p80,443 --rate 10000</p>
+          <p class="yellow-text">[+] Starting masscan 1.3.2 at 10,000 packets/sec...</p>
+          <p class="green-text">Discovered open port 80/tcp on 10.0.0.12</p>
+          <p class="green-text">Discovered open port 443/tcp on 10.0.0.12</p>
+          <p class="white-text">[+] Masscan complete. 2 hosts responsive.</p>
+        `;
+      } else if (type === 'firewall') {
+        term.innerHTML = `
+          <p class="cyan-text">root@dan-1:~# aws wafv2 get-web-acl --name VirusBossWAF</p>
+          <p class="green-text">[+] AWS WAF Status: ACTIVE (100% Rules Enforced)</p>
+          <p class="white-text">[+] Rate-limiting: ENABLED (Max 2000 req/5min per IP)</p>
+          <p class="green-text">[+] SQLi & XSS Shield: ONLINE</p>
+        `;
+      }
+    }
+
+    // TELEMETRY LIVE UPDATER
+    setInterval(() => {
+      document.getElementById('pingVal').textContent = (Math.floor(Math.random() * 8) + 10) + ' ms';
+      document.getElementById('cpuVal').textContent = (Math.floor(Math.random() * 12) + 12) + '%';
+    }, 2000);
+
+    // MATRIX CODE RAIN
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const chars = '0123456789ABCDEFABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*';
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(5, 10, 7, 0.08)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00ff66';
+      ctx.font = fontSize + 'px monospace';
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+    setInterval(drawMatrix, 33);
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // TYPING ANIMATION
+    const phrases = [
+      "SYSTEM ACCESS: NOMAAN KHAN",
+      "ALIAS: DAN-1 // VIRUS BOSS",
+      "PARROT SECURITY OS RESEARCHER",
+      "FULL-STACK & RECON OPERATIVE"
+    ];
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    const typingElement = document.getElementById("typingText");
+
+    function type() {
+      const currentPhrase = phrases[phraseIndex];
+      if (isDeleting) {
+        typingElement.textContent = currentPhrase.substring(0, charIndex - 1);
+        charIndex--;
+      } else {
+        typingElement.textContent = currentPhrase.substring(0, charIndex + 1);
+        charIndex++;
+      }
+      let speed = isDeleting ? 30 : 70;
+      if (!isDeleting && charIndex === currentPhrase.length) {
+        speed = 1600;
+        isDeleting = true;
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        phraseIndex = (phraseIndex + 1) % phrases.length;
+        speed = 400;
+      }
+      setTimeout(type, speed);
+    }
+    document.addEventListener("DOMContentLoaded", type);
+  </script>
+</body>
+</html>
